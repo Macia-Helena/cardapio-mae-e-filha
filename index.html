@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lanchonete Mãe e Filha | Cardápio Online</title>
+<meta name="description" content="Cardápio online da Lanchonete Mãe e Filha. Crepes, lanches e wraps. Peça pelo WhatsApp.">
+<style>
+:root {
+  --orange:#f56a16; --dark:#5a220b; --cream:#fff7ed; --line:#f0d8c2; --white:#fff;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#fffaf5;color:#35170b}
+header{background:linear-gradient(135deg,#ff7417,#e9520c);color:white;padding:28px 18px 22px;text-align:center;position:sticky;top:0;z-index:5;box-shadow:0 3px 14px #0002}
+.logo{font-size:38px;font-weight:900;letter-spacing:1px}
+.subtitle{font-size:18px;margin-top:4px}
+.container{max-width:1050px;margin:auto;padding:18px}
+.hero{margin:10px 0 22px;border-radius:20px;overflow:hidden;box-shadow:0 5px 20px #0002}
+.hero img{display:block;width:100%;max-height:560px;object-fit:cover}
+.info{background:#fff1df;border:1px solid var(--line);border-radius:16px;padding:15px;margin-bottom:20px;text-align:center}
+.info b{color:var(--orange)}
+h2{color:var(--orange);font-size:28px;margin:30px 0 14px;border-bottom:2px dotted #e8a879;padding-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:13px}
+.card{background:white;border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:0 2px 10px #0000000d}
+.card h3{margin:0 0 7px;font-size:18px;color:#3e1a0d}
+.desc{font-size:13px;color:#755848;margin-bottom:10px}
+.price{font-weight:900;color:var(--orange);font-size:19px}
+.btn{width:100%;border:0;border-radius:10px;padding:11px;margin-top:10px;background:var(--orange);color:white;font-weight:800;cursor:pointer}
+.btn:hover{filter:brightness(.94)}
+.float{position:fixed;right:18px;bottom:18px;background:#25d366;color:white;border-radius:50px;padding:15px 20px;font-weight:900;box-shadow:0 4px 18px #0003;z-index:8}
+.cart{position:fixed;left:18px;bottom:18px;background:#5a220b;color:white;border-radius:50px;padding:14px 19px;font-weight:900;box-shadow:0 4px 18px #0003;z-index:8}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:flex-end;justify-content:center}
+.modal.show{display:flex}
+.box{background:white;width:min(620px,100%);max-height:90vh;overflow:auto;border-radius:22px 22px 0 0;padding:22px}
+.row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #eee;padding:10px 0}
+input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:9px;margin:6px 0 12px;font-size:16px}
+.total{font-size:22px;font-weight:900;text-align:right;margin:15px 0;color:var(--orange)}
+.close{float:right;border:0;background:#eee;border-radius:50%;width:34px;height:34px;cursor:pointer}
+footer{margin-top:40px;background:#f56a16;color:white;text-align:center;padding:25px 15px}
+.small{font-size:12px;color:#777;margin-top:6px}
+@media(max-width:600px){.logo{font-size:31px} h2{font-size:24px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">❤️ WRAPFY • MÃE E FILHA ❤️</div>
+  <div class="subtitle">Lanchonete • Crepes • Lanches • Wraps</div>
+</header>
+
+<main class="container">
+  <div class="hero"><img src="imagens/cardapio_2.jpg" alt="Cardápio da Lanchonete Mãe e Filha"></div>
+  <div class="info">
+    <b>📍 Balneário de Ponta da Fruta • Vila Velha</b><br>
+    Avenida Marmelo, 302<br>
+    🛵 Delivery na região de Balneário e Ponta da Fruta<br>
+    📲 WhatsApp: (28) 99964-4204 • (27) 99511-6811
+  </div>
+
+  <h2>🥞 Crepes Salgados</h2>
+  <div class="grid" id="crepesSalgados"></div>
+
+  <h2>🍓 Crepes Doces</h2>
+  <div class="grid" id="crepesDoces"></div>
+
+  <h2>🍔 Lanches</h2>
+  <div class="grid" id="lanches"></div>
+
+  <h2>🌯 Wraps</h2>
+  <div class="grid" id="wraps"></div>
+
+  <div class="hero"><img src="imagens/cardapio_1.jpg" alt="Wraps da Lanchonete Mãe e Filha"></div>
+  <div class="hero"><img src="imagens/cardapio_3.jpg" alt="Lanches da Lanchonete Mãe e Filha"></div>
+</main>
+
+<button class="cart" onclick="openCart()">🛒 Pedido (<span id="count">0</span>)</button>
+<button class="float" onclick="openCart()">📲 Finalizar no WhatsApp</button>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <button class="close" onclick="closeCart()">×</button>
+    <h2 style="margin-top:0">Seu pedido</h2>
+    <div id="cartItems"></div>
+    <div class="total">Total: R$ <span id="total">0,00</span></div>
+    <label>Nome *</label>
+    <input id="name" placeholder="Seu nome">
+    <label>Entrega ou retirada *</label>
+    <select id="mode" onchange="toggleAddress()">
+      <option value="Retirada">Retirada na lanchonete</option>
+      <option value="Delivery">Delivery</option>
+    </select>
+    <div id="addressBox" style="display:none">
+      <label>Endereço para entrega *</label>
+      <textarea id="address" rows="3" placeholder="Rua, número, bairro e referência"></textarea>
+    </div>
+    <label>Forma de pagamento *</label>
+    <select id="payment">
+      <option>Pix</option><option>Dinheiro</option><option>Cartão</option>
+    </select>
+    <label>Observações</label>
+    <textarea id="notes" rows="2" placeholder="Ex.: sem cebola, ponto da carne..."></textarea>
+    <button class="btn" onclick="sendWhatsApp()">Enviar pedido pelo WhatsApp</button>
+    <div class="small">O pedido será aberto no WhatsApp para você confirmar o envio.</div>
+  </div>
+</div>
+
+<footer>
+  <b>Lanchonete Mãe e Filha</b><br>
+  Sabor feito com carinho para você!<br>
+  Seg a sáb • 11h às 22h
+</footer>
+
+<script>
+const products = [{"id": 0, "name": "Frango com Catupiry", "price": 24.0, "category": "Crepes Salgados"}, {"id": 1, "name": "Frango com Cheddar", "price": 24.0, "category": "Crepes Salgados"}, {"id": 2, "name": "Frango com Mussarela", "price": 24.0, "category": "Crepes Salgados"}, {"id": 3, "name": "Carne Seca com Catupiry", "price": 28.99, "category": "Crepes Salgados"}, {"id": 4, "name": "Peito de Peru com Cream Cheese", "price": 28.99, "category": "Crepes Salgados"}, {"id": 5, "name": "Costela com Cream Cheese", "price": 28.99, "category": "Crepes Salgados"}, {"id": 6, "name": "Bacon com Catupiry", "price": 24.0, "category": "Crepes Salgados"}, {"id": 7, "name": "Presunto e Queijo", "price": 24.0, "category": "Crepes Salgados"}, {"id": 8, "name": "Nutella com Morango", "price": 25.99, "category": "Crepes Doces"}, {"id": 9, "name": "Ovomaltine", "price": 25.99, "category": "Crepes Doces"}, {"id": 10, "name": "Tentação Morango com Nutella e Kit Kat", "price": 26.99, "category": "Crepes Doces"}, {"id": 11, "name": "Romeu e Julieta — Goiabada com Cream Cheese", "price": 25.99, "category": "Crepes Doces"}, {"id": 12, "name": "Hambúrguer — Normal", "price": 9.0, "category": "Lanches"}, {"id": 13, "name": "Hambúrguer — Picanha", "price": 10.0, "category": "Lanches"}, {"id": 14, "name": "X-Egg-Burg — Normal", "price": 15.0, "category": "Lanches"}, {"id": 15, "name": "X-Egg-Burg — Picanha", "price": 16.0, "category": "Lanches"}, {"id": 16, "name": "X-Bacon — Normal", "price": 18.0, "category": "Lanches"}, {"id": 17, "name": "X-Bacon — Picanha", "price": 20.0, "category": "Lanches"}, {"id": 18, "name": "X-Egg Bacon — Normal", "price": 20.0, "category": "Lanches"}, {"id": 19, "name": "X-Egg Bacon — Picanha", "price": 22.0, "category": "Lanches"}, {"id": 20, "name": "X-Egg Calabresa — Normal", "price": 20.0, "category": "Lanches"}, {"id": 21, "name": "X-Egg Calabresa — Picanha", "price": 22.0, "category": "Lanches"}, {"id": 22, "name": "X-Tudo — Normal", "price": 25.0, "category": "Lanches"}, {"id": 23, "name": "X-Tudo — Picanha", "price": 28.0, "category": "Lanches"}, {"id": 24, "name": "Americano — Normal", "price": 20.0, "category": "Lanches"}, {"id": 25, "name": "Americano — Picanha", "price": 22.0, "category": "Lanches"}, {"id": 26, "name": "X-Guloso — Normal", "price": 40.0, "category": "Lanches"}, {"id": 27, "name": "X-Guloso — Picanha", "price": 45.0, "category": "Lanches"}, {"id": 28, "name": "Misto Triplo — Normal", "price": 17.0, "category": "Lanches"}, {"id": 29, "name": "Misto Triplo — Picanha", "price": 18.0, "category": "Lanches"}, {"id": 30, "name": "X-Salada Frango", "price": 20.0, "category": "Lanches"}, {"id": 31, "name": "X-Tudo Frango", "price": 28.0, "category": "Lanches"}, {"id": 32, "name": "Misto", "price": 15.0, "category": "Lanches"}, {"id": 33, "name": "No Prato", "price": 30.0, "category": "Lanches"}, {"id": 34, "name": "Wrapy Costela com Cream Cheese", "price": 32.99, "category": "Wraps"}];
+let cart = {};
+
+function money(v) {
+  return v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function add(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  renderCart();
+}
+function remove(id) {
+  if (!cart[id]) return;
+  cart[id]--;
+  if (cart[id] <= 0) delete cart[id];
+  renderCart();
+}
+function renderCategory(cat, elementId) {
+  const el = document.getElementById(elementId);
+  const list = products.filter(p => p.category === cat);
+  el.innerHTML = list.map(p => `
+    <div class="card">
+      <h3>${p.name}</h3>
+      <div class="price">R$ ${money(p.price)}</div>
+      <button class="btn" onclick="add(${p.id})">+ Adicionar ao pedido</button>
+    </div>
+  `).join('');
+}
+function renderCart() {
+  let count = 0, total = 0;
+  let html = '';
+  for (const [id, qty] of Object.entries(cart)) {
+    const p = products.find(x => x.id == id);
+    count += qty; total += p.price * qty;
+    html += `<div class="row">
+      <div><b>${qty}x</b> ${p.name}<br><span class="small">R$ ${money(p.price * qty)}</span></div>
+      <div><button onclick="remove(${p.id})">−</button> <button onclick="add(${p.id})">+</button></div>
+    </div>`;
+  }
+  document.getElementById('cartItems').innerHTML = html || '<p>Seu carrinho está vazio.</p>';
+  document.getElementById('count').textContent = count;
+  document.getElementById('total').textContent = money(total);
+}
+function openCart() { document.getElementById('modal').classList.add('show'); renderCart(); }
+function closeCart() { document.getElementById('modal').classList.remove('show'); }
+function toggleAddress() {
+  document.getElementById('addressBox').style.display =
+    document.getElementById('mode').value === 'Delivery' ? 'block' : 'none';
+}
+function sendWhatsApp() {
+  const name = document.getElementById('name').value.trim();
+  const mode = document.getElementById('mode').value;
+  const address = document.getElementById('address').value.trim();
+  const payment = document.getElementById('payment').value;
+  const notes = document.getElementById('notes').value.trim();
+  if (!name) return alert('Informe seu nome.');
+  if (mode === 'Delivery' && !address) return alert('Informe o endereço para entrega.');
+  if (Object.keys(cart).length === 0) return alert('Adicione pelo menos um item ao pedido.');
+
+  let total = 0;
+  let lines = ['*NOVO PEDIDO - LANCHONETE MÃE E FILHA*', ''];
+  for (const [id, qty] of Object.entries(cart)) {
+    const p = products.find(x => x.id == id);
+    total += p.price * qty;
+    lines.push(`${qty}x ${p.name} - R$ ${money(p.price * qty)}`);
+  }
+  lines.push('', `*TOTAL: R$ ${money(total)}*`);
+  lines.push(`Nome: ${name}`);
+  lines.push(`Tipo: ${mode}`);
+  if (mode === 'Delivery') lines.push(`Endereço: ${address}`);
+  lines.push(`Pagamento: ${payment}`);
+  if (notes) lines.push(`Observações: ${notes}`);
+  lines.push('', 'Enviado pelo cardápio online.');
+
+  // Número principal; pode ser alterado facilmente no código.
+  const phone = '5528999644204';
+  window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(lines.join('\n')), '_blank');
+}
+
+renderCategory('Crepes Salgados','crepesSalgados');
+renderCategory('Crepes Doces','crepesDoces');
+renderCategory('Lanches','lanches');
+renderCategory('Wraps','wraps');
+renderCart();
+</script>
+</body>
+</html>
